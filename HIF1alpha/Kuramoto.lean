@@ -20,3 +20,9 @@ theorem kuramoto_synchronization (n : ℕ) (coupling : ℝ)
   sorry
 
 end HIF1alpha
+
+-- Example phase extraction
+#eval do
+  let s : State := { hif := 3.0, phd := 4.0 }
+  let phase := extractPhase s
+  IO.println s!"Extracted phase from state {s}: {phase}"

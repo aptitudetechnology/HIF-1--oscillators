@@ -54,7 +54,7 @@ def Trajectory := ℝ → State
 
 /-- Predicate: a trajectory solves the HIF-1α ODE -/
 def IsSolution (params : Parameters) (traj : Trajectory) : Prop :=
-  ∀ t : ℝ, 
+  ∀ t : ℝ,
     -- dH/dt = vectorField.hif
     deriv (fun τ => (traj τ).hif) t = (vectorField params (traj t)).hif ∧
     -- dP/dt = vectorField.phd
@@ -80,10 +80,10 @@ structure LimitCycle (params : Parameters) where
 /-! ## Theorems to prove -/
 
 /-- Existence and uniqueness of solutions (Picard-Lindelöf) -/
-theorem solution_exists_unique (params : Parameters) (s₀ : State) 
+theorem solution_exists_unique (params : Parameters) (s₀ : State)
     (h : s₀ ∈ StateSpace) :
-    ∃! traj : Trajectory, 
-      IsSolution params traj ∧ 
+    ∃! traj : Trajectory,
+      IsSolution params traj ∧
       traj 0 = s₀ ∧
       ∀ t, traj t ∈ StateSpace := by
   sorry
@@ -91,7 +91,7 @@ theorem solution_exists_unique (params : Parameters) (s₀ : State)
 /-- Boundedness: solutions remain in a compact set -/
 theorem solutions_bounded (params : Parameters) (traj : Trajectory)
     (h : IsSolution params traj) :
-    ∃ M : ℝ, ∀ t : ℝ, 
+    ∃ M : ℝ, ∀ t : ℝ,
       (traj t).hif ≤ M ∧ (traj t).phd ≤ M := by
   sorry
 
@@ -119,9 +119,9 @@ def couplingTerm (coupling : ℝ) (i : Fin n) (pop : PopulationState n) : State 
   sorry
 
 /-- Vector field for coupled population -/
-def populationVectorField (n : ℕ) (params : Parameters) (coupling : ℝ) 
+def populationVectorField (n : ℕ) (params : Parameters) (coupling : ℝ)
     (pop : PopulationState n) : PopulationState n :=
-  { cells := fun i => 
+  { cells := fun i =>
       -- Individual dynamics + coupling
       let individual := vectorField params (pop.cells i)
       let coupled := couplingTerm coupling i pop
@@ -139,9 +139,28 @@ def SynchronizationBasin (n : ℕ) (params : Parameters) (coupling : ℝ) : Set 
 
 /-- Critical coupling strength for synchronization transition -/
 theorem critical_coupling_exists (n : ℕ) (params : Parameters) :
-    ∃ K_c : ℝ, ∀ K > K_c, 
+    ∃ K_c : ℝ, ∀ K > K_c,
       -- Most initial conditions lead to synchronization
       True := by
   sorry
 
 end HIF1alpha
+
+-- Example computations
+#eval do
+  let params : Parameters := {
+    k1 := 1.0,
+    k2 := 0.1,
+    k3 := 0.05,
+    k4 := 0.2,
+    k5 := 0.1,
+    k1_pos := by norm_num,
+    k2_pos := by norm_num,
+    k3_pos := by norm_num,
+    k4_pos := by norm_num,
+    k5_pos := by norm_num
+  }
+  let state : State := { hif := 2.0, phd := 1.5 }
+  IO.println s!"Example parameters: {params}"
+  IO.println s!"Example state: {state}"
+  IO.println s!"Vector field: {vectorField params state}"
